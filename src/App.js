@@ -1,14 +1,21 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Homepage from './pages/Homepage';
+import Exhibitions from './pages/Exhibitions';
+import News from './pages/News';
+import Info from './pages/Info';
+import Shop from './pages/Shop';
 
 function App() {
   return (
-    <div className="flex flex-col min-h-screen">
-      
-      <div className="flex-grow page-content">
-      <h1 className="text-3xl font-bold underline">
-      hello</h1>
-      </div>
-
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Homepage />} />
+        <Route path="/exhibitions" element={<Exhibitions />} />
+        <Route path="/news" element={<News />} />
+        <Route path="/info" element={<Info />} />
+        <Route path="/shop" element={<Shop />} />
+      </Routes>
+    </Router>
   );
 }
 
