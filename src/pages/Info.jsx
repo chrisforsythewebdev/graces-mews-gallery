@@ -1,3 +1,4 @@
+import Header from '../components/Header';
 import Nav from '../components/Navbar';
 import shopImage from '../assets/images/shop.jpeg';
 
@@ -7,8 +8,7 @@ export default function Info() {
       
       {/* Header and Mobile Nav */}
       <div className="flex flex-col items-center w-full mb-12">
-        <h1 className="text-5xl md:text-6xl font-bold">GRACES MEWS</h1>
-
+        <Header />
         {/* Mobile Nav */}
         <div className="md:hidden mt-4">
           <Nav />

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Header from '../components/Header';
 import Nav from '../components/Navbar';
 import dickImg from '../assets/images/dick-homepage.jpeg';
 
@@ -34,8 +35,7 @@ export default function Homepage() {
 
         {/* Header + Mobile Nav */}
         <div className="flex flex-col items-center pt-8">
-          <h1 className="text-5xl md:text-6xl font-bold">GRACES MEWS</h1>
-          
+          <Header />          
           {/* Mobile Nav visible only on mobile */}
           <div className="md:hidden mt-4">
             <Nav />
