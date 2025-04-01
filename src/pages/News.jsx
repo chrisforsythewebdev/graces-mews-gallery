@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { newsItems } from '../data/newsData';
-import Header from '../components/Header';
-import Nav from '../components/Navbar';
+import Layout from '../components/Layout';
 
 export default function News() {
   const [hoveredItem, setHoveredItem] = useState(null);
@@ -17,10 +16,8 @@ export default function News() {
   const isActiveHover = hoveredItem !== null;
 
   return (
-    <div className="min-h-screen w-full p-8 flex flex-col items-center">
-      <Header />
-
-      <div className="relative w-full text-2xl max-w-6xl mt-12 px-8">
+    <Layout>
+      <div className="relative w-full text-2xl max-w-6xl mx-auto mt-12 px-4 md:px-8">
         {/* Hover Preview Image (behind content) */}
         {hoveredItem && (
           <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-0 pointer-events-none">
@@ -78,10 +75,6 @@ export default function News() {
             ))}
         </div>
       </div>
-
-      <div className="mt-16">
-        <Nav />
-      </div>
-    </div>
+    </Layout>
   );
 }

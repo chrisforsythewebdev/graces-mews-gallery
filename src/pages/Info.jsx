@@ -1,21 +1,10 @@
-import Header from '../components/Header';
-import Nav from '../components/Navbar';
+import Layout from '../components/Layout';
 import shopImage from '../assets/images/shop.jpeg';
 
 export default function Info() {
   return (
-    <div className="min-h-screen w-full p-8 flex flex-col items-center">
-      
-      {/* Header and Mobile Nav */}
-      <div className="flex flex-col items-center w-full mb-12">
-        <Header />
-        {/* Mobile Nav */}
-        <div className="md:hidden mt-4">
-          <Nav />
-        </div>
-      </div>
-
-      <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-8">
+    <Layout>
+      <div className="w-full max-w-6xl px-4 md:px-0 mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
 
         {/* Mobile Image (top) */}
         <div className="md:hidden w-full flex justify-center mb-4">
@@ -76,11 +65,6 @@ export default function Info() {
           />
         </div>
       </div>
-
-      {/* Desktop Nav at bottom */}
-      <div className="hidden md:flex justify-center mt-12">
-        <Nav />
-      </div>
-    </div>
+    </Layout>
   );
 }
