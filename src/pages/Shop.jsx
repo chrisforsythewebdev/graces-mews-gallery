@@ -5,7 +5,7 @@ import shop2 from '../assets/images/shop2.jpeg';
 export default function Shop() {
   return (
     <Layout>
-      <div className="w-full px-4 md:px-8 mt-12 flex flex-col items-center">
+      <div className="flex-1 w-full px-4 md:px-8 mt-12 flex flex-col items-center pb-[120px]">
         {/* Main Content (Images) */}
         <div className="flex flex-col md:flex-row items-center md:items-start justify-center w-full max-w-8xl gap-8 my-8">
           {/* Left Image */}

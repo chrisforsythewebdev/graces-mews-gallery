@@ -20,14 +20,15 @@ export default function News() {
       <div className="relative w-full text-2xl max-w-6xl mx-auto mt-12 px-4 md:px-8">
         {/* Hover Preview Image (behind content) */}
         {hoveredItem && (
-          <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-0 pointer-events-none">
+          <div className="fixed inset-0 flex items-center justify-center z-10 pointer-events-none">
             <img
               src={hoveredItem.thumbnail}
               alt={hoveredItem.title}
-              className="w-[900px] h-auto shadow-lg opacity-100"
+              className="w-[640px] h-[400px] object-cover shadow-xl transition-opacity duration-300 ease-in-out"
             />
           </div>
         )}
+
 
         {/* Text Rows */}
         <div className="relative z-10">
