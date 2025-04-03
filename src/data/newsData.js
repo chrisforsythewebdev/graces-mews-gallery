@@ -22,7 +22,7 @@ export const newsItems = Array.from({ length: 20 }, (_, index) => {
     year: year,
     thumbnail: thumb,
     gallery: [thumb, ...thumbnails.slice(1, 3)],
-    video: index === 0 ? 'https://www.youtube.com/embed/ktpmzRj4w30' : '',
+    video: index === 0 ? 'https://www.youtube.com/embed/b674b_ccGXY?si=WoCpQ-l6f6UMCgHY' : '',
     description:
       index === 0
         ? `Following the success of the first edition, which sold out within one month of its release, this second edition contains additional unseen images. It also coincides with the upcoming release of 'CUTS' — a documentary film by Sarah Lewis. All profits from sales of this edition will fund the film's completion.`

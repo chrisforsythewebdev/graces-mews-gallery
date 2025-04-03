@@ -5,7 +5,7 @@ import News from './pages/News';
 import NewsDetail from './pages/NewsDetails';
 import Info from './pages/Info';
 import Shop from './pages/Shop';
-
+import ArtistDetails from './pages/ArtistDetails';
 function App() {
   return (
     <Router>
@@ -16,6 +16,7 @@ function App() {
         <Route path="/news/:id" element={<NewsDetail />} />
         <Route path="/info" element={<Info />} />
         <Route path="/shop" element={<Shop />} />
+        <Route path="/artist/:slug" element={<ArtistDetails />} />
       </Routes>
     </Router>
   );

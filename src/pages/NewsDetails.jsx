@@ -149,7 +149,7 @@ export default function NewsDetail() {
 
         {/* Mobile: Second Text Block + Video */}
         <div className="md:hidden space-y-2 mt-6">
-          <div className="text-sm font-semibold leading-relaxed">
+          <div className="text-sm">
             <p>
               The book launch for this second edition was held at Reference Point with a Q&A with
               Sarah Lewis chaired by Jonah Freud. Since this event, the documentary was screened at
