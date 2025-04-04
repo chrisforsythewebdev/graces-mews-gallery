@@ -13,31 +13,33 @@ export default function ArtistDetails() {
 
   return (
     <Layout>
-      <div className="w-full max-w-5xl mx-auto px-4 md:px-8 mt-4 pb-[120px]">
+      <div className="w-full max-w-6xl mx-auto px-4 md:px-8 mt-4 pb-[60px]">
         <h1 className="text-2xl font-bold uppercase mb-4 underline">{artist.name}</h1>
 
         {/* Top Scrollable Image Section */}
         <div className="relative overflow-hidden mb-6">
         <div
             ref={topScrollRef}
-            className="flex overflow-x-auto gap-4 pb-2 scroll-smooth snap-x snap-mandatory"
+            className="flex overflow-x-auto gap-4 scroll-smooth snap-x snap-mandatory"
         >
             {artist.topImages.map((img, i) => (
             <div
                 key={i}
-                className="w-full min-w-[300px] md:min-w-[250px] max-w-xs flex-shrink-0 snap-start flex flex-col justify-end"
+                className="min-w-[250px] max-w-[250px] flex-shrink-0 snap-start flex flex-col items-start"
             >
+                <div className="w-full h-[360px] bg-white flex items-end justify-center overflow-hidden">
                 <img
-                src={img.src}
-                alt={`Top ${i}`}
-                className="object-cover w-full h-[360px] mb-1"
+                    src={img.src}
+                    alt={`Top ${i}`}
+                    className="max-h-full max-w-full object-contain"
                 />
-                <p className="text-sm font-semibold">{img.caption}</p>
+                </div>
+                <p className="text-md font-semibold mt-1">{img.caption}</p>
             </div>
             ))}
         </div>
 
-        <div className="flex gap-2 mt-2 justify-start">
+        <div className="flex gap-2 justify-start">
             <button
             onClick={() =>
                 topScrollRef.current.scrollBy({ left: -300, behavior: 'smooth' })
@@ -92,7 +94,7 @@ export default function ArtistDetails() {
         <h2 className="text-2xl uppercase font-bold mb-2">Bio</h2>
         <div className="border-t border-black mb-2" />
         <p className="text-md uppercase font-bold mb-4">{artist.location}</p>
-        <p className="text-md whitespace-pre-line">{artist.bio}</p>
+        <p className="text-md whitespace-pre-line w-2/3">{artist.bio}</p>
       </div>
     </Layout>
   );

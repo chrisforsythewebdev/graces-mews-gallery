@@ -1,7 +1,5 @@
-import { useState } from 'react';
-import { useRef } from 'react';
-import Header from '../components/Header';
-import Nav from '../components/Navbar';
+import { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import jas from '../assets/images/jas-knight.jpeg';
 import dick from '../assets/images/dick-homepage.jpeg';
 import harley from '../assets/images/harley.jpeg';
@@ -56,6 +54,40 @@ export default function Exhibitions() {
   const ExhibitionRow = ({ item, index, section }) => {
     const isExpanded = expandedIndex === `${section}-${index}`;
     const carouselRef = useRef(null);
+    const contentRef = useRef(null);
+    const slug = item.artist.toLowerCase().replace(/\s+/g, '-');
+
+    const [height, setHeight] = useState(0);
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+      const contentEl = contentRef.current;
+      if (!contentEl) return;
+
+      const handleTransitionEnd = () => {
+        if (!isExpanded) {
+          setIsVisible(false);
+        }
+      };
+
+      if (isExpanded) {
+        setIsVisible(true);
+        requestAnimationFrame(() => {
+          setHeight(contentEl.scrollHeight);
+        });
+      } else if (!isExpanded && contentEl) {
+        setHeight(contentEl.scrollHeight);
+        requestAnimationFrame(() => {
+          setHeight(0);
+        });
+
+        contentEl.addEventListener('transitionend', handleTransitionEnd, { once: true });
+      }
+
+      return () => {
+        contentEl?.removeEventListener('transitionend', handleTransitionEnd);
+      };
+    }, [isExpanded]);
 
     return (
       <div
@@ -64,25 +96,29 @@ export default function Exhibitions() {
         onClick={() => handleToggle(`${section}-${index}`)}
       >
         {/* Desktop layout */}
-        <div className="hidden md:flex flex-row justify-between text-lg">
-          <p className="font-semibold w-1/4">{item.date}</p>
-          <p className="font-semibold w-1/4">{item.artist}</p>
-          <p className="font-semibold uppercase w-1/4">{item.title}</p>
-          <p className="w-1/12">{item.location}</p>
-          {/* Thumbnail only if not expanded */}
-          {!isExpanded && item.images?.[0] && (
+        <div className="hidden md:grid grid-cols-[1fr_1fr_1fr_1fr_144px] gap-4 text-lg items-start">
+          <p className="font-semibold">{item.date}</p>
+          <p className="font-semibold">
+            <Link to={`/artist/${slug}`} className="hover:underline">
+              {item.artist}
+            </Link>
+          </p>
+          <p className="font-semibold uppercase">{item.title}</p>
+          <p className='mb-4'>{item.location}</p>
+          {!isExpanded && item.images?.[0] ? (
             <img
               src={item.images[0]}
               alt={item.title}
               className="w-36 h-24 object-cover"
             />
+          ) : (
+            <div className="w-36 h-0" />
           )}
         </div>
 
         {/* Mobile layout */}
         <div className="md:hidden flex flex-col space-y-1">
           <p className="text-md font-semibold">{item.date}</p>
-
           {item.images?.[0] && (
             <img
               src={item.images[0]}
@@ -90,19 +126,27 @@ export default function Exhibitions() {
               className="w-full h-[220px] object-cover my-2"
             />
           )}
-
           <div className="flex justify-between text-md font-bold uppercase">
             <p>{item.title}</p>
             <p>{item.location}</p>
           </div>
-
-          <p className="text-md font-semibold">{item.artist}</p>
+          <p className="text-md font-semibold">
+            <Link to={`/artist/${slug}`} className="hover:underline">
+              {item.artist}
+            </Link>
+          </p>
         </div>
 
         {/* Expandable section */}
-        {isExpanded && (
-          <div className="mt-4 space-y-4 w-full">
-            {/* Desktop View: Full-width Carousel with bottom arrows */}
+        <div
+          className="transition-all duration-500 ease-in-out overflow-hidden"
+          style={{ maxHeight: `${height}px` }}
+        >
+          <div
+            ref={contentRef}
+            className={`pt-2 space-y-2 w-full ${isVisible ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
+          >
+            {/* Desktop carousel */}
             <div className="hidden md:flex flex-col items-center w-full space-y-2">
               <div
                 ref={carouselRef}
@@ -117,42 +161,28 @@ export default function Exhibitions() {
                   />
                 ))}
               </div>
-
-              {/* Arrow controls below the image */}
               <div className="w-full mt-2">
-                  <div className="flex justify-start space-x-2">
-                    <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          carouselRef.current?.scrollBy({ left: -600, behavior: 'smooth' });
-                        }}
-                        className="text-xl hover:underline"
-                      >
-                        ←
-                    </button>
-
-                    <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          carouselRef.current?.scrollBy({ left: 600, behavior: 'smooth' });
-                        }}
-                        className="text-xl hover:underline"
-                      >
-                        →
-                    </button>
-                  </div>
+                <div className="flex justify-start space-x-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      carouselRef.current?.scrollBy({ left: -600, behavior: 'smooth' });
+                    }}
+                    className="text-xl hover:underline"
+                  >
+                    ←
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      carouselRef.current?.scrollBy({ left: 600, behavior: 'smooth' });
+                    }}
+                    className="text-xl hover:underline"
+                  >
+                    →
+                  </button>
+                </div>
               </div>
-            </div>
-
-            {/* Mobile View: Only show first image */}
-            <div className="md:hidden">
-              {item.images?.[0] && (
-                <img
-                  src={item.images[0]}
-                  alt={item.title}
-                  className="w-full h-[220px] object-cover"
-                />
-              )}
             </div>
 
             {/* Description */}
@@ -162,55 +192,48 @@ export default function Exhibitions() {
               </p>
             )}
           </div>
-        )}
-
+        </div>
       </div>
     );
   };
 
   return (
     <Layout>
-    <div className="min-h-screen w-full p-4 md:p-8 flex flex-col items-center">
+      <div className="min-h-screen w-full p-4 md:p-8 flex flex-col items-center">
+        {/* CURRENT */}
+        <section className="w-full max-w-6xl mb-12">
+          <h2 className="text-[32px] font-bold leading-none mb-4">CURRENT</h2>
+          <div className="border-b border-black" />
+          {exhibitions.current.map((item, i) => (
+            <ExhibitionRow key={i} item={item} index={i} section="current" />
+          ))}
+        </section>
 
-      {/* CURRENT */}
-      <section className="w-full max-w-5xl mb-12">
-        <h2 className="text-[32px] font-bold leading-none mb-4">CURRENT</h2>
-        <div className="border-b border-black" />
-        {exhibitions.current.map((item, i) => (
-          <ExhibitionRow key={i} item={item} index={i} section="current" />
-        ))}
-      </section>
+        {/* UPCOMING */}
+        <section className="w-full max-w-6xl mb-12">
+          <h2 className="text-[32px] font-bold leading-none mb-4">UPCOMING</h2>
+          <div className="border-b border-black" />
+          {exhibitions.upcoming.map((item, i) => (
+            <ExhibitionRow key={i} item={item} index={i} section="upcoming" />
+          ))}
+        </section>
 
-      {/* UPCOMING */}
-      <section className="w-full max-w-5xl mb-12">
-        <h2 className="text-[32px] font-bold leading-none mb-4">UPCOMING</h2>
-        <div className="border-b border-black" />
-        {exhibitions.upcoming.map((item, i) => (
-          <ExhibitionRow key={i} item={item} index={i} section="upcoming" />
-        ))}
-      </section>
-
-      {/* PAST */}
-      <section className="w-full max-w-5xl mb-24">
-        <h2 className="text-[32px] font-bold leading-none mb-4">PAST</h2>
-        <div className="border-b border-black opacity-50 mb-2" />
-        {exhibitions.past.map((item, i) => (
-          <div
-            key={i}
-            className="opacity-30 py-2 text-lg md:text-lg flex flex-col md:flex-row md:justify-between md:items-start"
-          >
-            <p className="font-semibold mb-0 md:w-1/4">{item.date}</p>
-            <p className="font-semibold mb-0 md:w-1/4">{item.artist}</p>
-            <p className="uppercase md:w-1/2">{item.title}</p>
-          </div>
-        ))}
-      </section>
-
-      {/* Desktop Nav */}
-      {/* <div className="hidden md:flex justify-center">
-        <Nav />
-      </div> */}
-    </div>
+        {/* PAST */}
+        <section className="w-full max-w-6xl mb-24">
+          <h2 className="text-[32px] font-bold leading-none mb-4">PAST</h2>
+          <div className="border-b border-black opacity-50 mb-2" />
+          {exhibitions.past.map((item, i) => (
+            <div
+              key={i}
+              className="opacity-30 py-2 text-lg md:text-lg flex flex-col md:flex-row md:justify-between md:items-start"
+            >
+              <p className="font-semibold mb-0 md:w-1/4">{item.date}</p>
+              <p className="font-semibold mb-0 md:w-1/4">{item.artist}</p>
+              <p className="uppercase md:w-1/2">{item.title}</p>
+            </div>
+          ))}
+        </section>
+      </div>
     </Layout>
   );
 }

@@ -1,13 +1,16 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 
 export default function Nav() {
+  const { pathname } = useLocation();
   const activeStyle = 'underline';
 
   return (
     <nav className="space-x-4 md:space-x-8 text-2xl font-bold md:mb-8">
       <NavLink
         to="/exhibitions"
-        className={({ isActive }) => (isActive ? activeStyle : '')}
+        className={({ isActive }) =>
+          isActive || pathname.startsWith('/artist') ? activeStyle : ''
+        }
       >
         EXHIBITIONS
       </NavLink>
