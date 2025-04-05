@@ -16,7 +16,7 @@ export const newsItems = Array.from({ length: 20 }, (_, index) => {
     number: String(index + 1).padStart(3, '0'),
     title: index === 0
       ? `'CUTS': New Updated 2nd Edition Book And Documentary Screening`
-      : `Event Title ${index + 1} Event Title ${index + 1} Event Title`,
+      : `Event Title ${index + 1} Event Title ${index + 1} `,
     date: `${Math.ceil(Math.random() * 28)} Jan`,
     fullDate: `${Math.ceil(Math.random() * 28)} January ${year}`,
     year: year,

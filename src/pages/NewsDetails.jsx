@@ -24,7 +24,7 @@ export default function NewsDetail() {
         <div className="md:hidden mb-4 w-full">
           <div className='w-3/4'>
             <h2 className="font-bold text-lg uppercase">{item.title}</h2>
-            <p className="text-base text-gray-500">{item.fullDate}</p>
+            <p className="text-lg text-gray-500">{item.fullDate}</p>
           </div>
           <p className="text-md pt-2">
             The triptychs that appear in the book were originally displayed as enlarged 35mm
@@ -133,7 +133,7 @@ export default function NewsDetail() {
                     src={item.video}
                     title="Video"
                     allowFullScreen
-                    className="w-full h-full"
+                    className="w-full h-[350px]"
                   />
                 </div>
               )}
@@ -149,7 +149,7 @@ export default function NewsDetail() {
 
         {/* Mobile: Second Text Block + Video */}
         <div className="md:hidden space-y-2 mt-6">
-          <div className="text-sm">
+          <div className="text-md mb-6">
             <p>
               The book launch for this second edition was held at Reference Point with a Q&A with
               Sarah Lewis chaired by Jonah Freud. Since this event, the documentary was screened at
@@ -176,11 +176,11 @@ export default function NewsDetail() {
           )}
 
           {item.credit && (
-            <p className="text-md opacity-60">{item.credit}</p>
+            <p className="text-md opacity-60 pb-12">{item.credit}</p>
           )}
 
           {item.buyText && (
-            <p className="text-lg mt-6">{item.buyText}</p>
+            <p className="text-lg mt-">{item.buyText}</p>
           )}
         </div>
       </div>
