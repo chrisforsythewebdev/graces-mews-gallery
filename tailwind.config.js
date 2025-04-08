@@ -8,6 +8,15 @@ module.exports = {
       fontFamily: {
         tabletGothic: ['"Tablet Gothic Condensed"', 'sans-serif'],
       },
+      animation: {
+        slowspin: 'slowspin 8s linear infinite',
+      },
+      keyframes: {
+        slowspin: {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
+      },
     },
   },
   plugins: [],

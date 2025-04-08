@@ -97,9 +97,16 @@ export default function Exhibitions() {
       >
         {/* Desktop layout */}
         <div className="hidden md:grid grid-cols-[1fr_1fr_1fr_1fr_144px] gap-4 text-lg items-start">
-          <p className="font-semibold">{item.date}</p>
+          <div className="flex flex-col justify-between h-full relative">
+            <p className="font-semibold">{item.date}</p>
+            {section === 'current' && (
+              <span className="absolute bottom-0 left-0 text-xl transform transition-transform duration-300">
+                {isExpanded ? '' : '↓'}
+              </span>
+            )}
+          </div>
           <p className="font-semibold">
-            <Link to={`/artist/${slug}`} className="hover:underline">
+            <Link to={`/artist/${slug}`} className="underline hover:no-underline">
               {item.artist}
             </Link>
           </p>

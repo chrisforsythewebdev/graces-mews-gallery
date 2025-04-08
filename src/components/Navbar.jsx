@@ -4,37 +4,67 @@ export default function Nav() {
   const { pathname } = useLocation();
   const activeStyle = 'underline';
 
+  const isHome = pathname === '/';
+
+  const links = [
+    {
+      to: '/exhibitions',
+      label: 'EXHIBITIONS',
+      match: (path) => path === '/exhibitions' || path.startsWith('/artist'),
+      hideOnHome: true,
+      external: false,
+    },
+    {
+      to: '/news',
+      label: 'NEWS',
+      hideOnHome: true,
+      external: false,
+    },
+    {
+      to: 'https://www.dobedo.com/shop',
+      label: 'SHOP',
+      hideOnHome: true,
+      external: true,
+    },
+    {
+      to: '/info',
+      label: 'INFO',
+      external: false,
+    },
+  ];
+
   return (
     <nav className="space-x-4 md:space-x-8 text-2xl font-bold md:mb-8">
-      <NavLink
-        to="/exhibitions"
-        className={({ isActive }) =>
-          isActive || pathname.startsWith('/artist') ? activeStyle : ''
+      {links.map(({ to, label, match, hideOnHome, external }) => {
+        if (isHome && hideOnHome) return null;
+
+        if (external) {
+          return (
+            <a
+              key={to}
+              href={to}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-transform duration-300 md:hover:scale-110 inline-block"
+            >
+              {label}
+            </a>
+          );
         }
-      >
-        EXHIBITIONS
-      </NavLink>
 
-      <NavLink
-        to="/news"
-        className={({ isActive }) => (isActive ? activeStyle : '')}
-      >
-        NEWS
-      </NavLink>
-
-      <NavLink
-        to="/shop"
-        className={({ isActive }) => (isActive ? activeStyle : '')}
-      >
-        SHOP
-      </NavLink>
-
-      <NavLink
-        to="/info"
-        className={({ isActive }) => (isActive ? activeStyle : '')}
-      >
-        INFO
-      </NavLink>
+        return (
+          <NavLink
+            key={to}
+            to={to}
+            className={({ isActive }) =>
+              (isActive || (match && match(pathname)) ? activeStyle : '') +
+              ' transition-transform duration-300 md:hover:scale-110 inline-block'
+            }
+          >
+            {label}
+          </NavLink>
+        );
+      })}
     </nav>
   );
 }

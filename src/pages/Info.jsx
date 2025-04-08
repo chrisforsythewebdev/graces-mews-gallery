@@ -4,20 +4,9 @@ import shopImage from '../assets/images/shop.jpeg';
 export default function Info() {
   return (
     <Layout>
-      <div className="w-full max-w-6xl px-4 md:px-0 mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-
-        {/* Mobile Image (top) */}
-        <div className="md:hidden w-full flex justify-center mb-4">
-          <img
-            src={shopImage}
-            alt="Gallery Shop"
-            className="object-cover"
-            style={{ width: '100%', maxWidth: '502px', height: 'auto' }}
-          />
-        </div>
-
-        {/* Text Content */}
-        <div className="text-left space-y-6">
+      <div className="w-full max-w-6xl px-4 md:px-0 mx-auto mt-12 grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+        {/* Text Column */}
+        <div className="flex flex-col space-y-6">
           <p className="text-lg font-semibold">
             Graces Mews Gallery is home to an international roster of photographers, filmmakers and multidisciplinary artists.
             Established in 2008 as a gallery and independent publishing company based in London, DoBeDo has grown to include
@@ -28,6 +17,18 @@ export default function Info() {
             A curated selection of photography books and products published and commissioned by DoBeDo Projects will be available
             to purchase in our ground-floor shop.
           </p>
+
+          {/* Rotating SHOP ONLINE Button - Desktop */}
+          <div className="hidden md:flex mt-4">
+            <a
+              href="https://www.dobedo.com/shop"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-yellow-400 text-black font-bold rounded-full w-32 h-32 flex items-center justify-center text-center rotate-[-20deg] shadow-md animate-slowspin"
+            >
+              SHOP<br />ONLINE
+            </a>
+          </div>
 
           {/* Addresses */}
           <div className="grid grid-cols-2 text-gray-500 font-semibold text-md">
@@ -55,13 +56,23 @@ export default function Info() {
           </div>
         </div>
 
-        {/* Desktop Image (right side) */}
-        <div className="hidden md:flex justify-end">
+        {/* Desktop Image Column */}
+        <div className="hidden md:block w-full">
+          <img
+            src={shopImage}
+            alt="Gallery Shop"
+            className="w-full h-auto object-cover"
+            style={{ maxHeight: '656px' }}
+          />
+        </div>
+
+        {/* Mobile Image (top) */}
+        <div className="md:hidden w-full flex justify-center mb-4">
           <img
             src={shopImage}
             alt="Gallery Shop"
             className="object-cover"
-            style={{ width: '500px', height: '556px' }}
+            style={{ width: '100%', maxWidth: '502px', height: '6' }}
           />
         </div>
       </div>

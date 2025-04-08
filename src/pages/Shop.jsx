@@ -17,11 +17,13 @@ export default function Shop() {
             />
             {/* Shop Online Button aligned left (Desktop) */}
             <a
-              href="#"
-              className="absolute -bottom-[150px] left-0 bg-yellow-400 text-black font-bold rounded-full w-32 h-32 flex items-center justify-center text-center rotate-[-20deg] shadow-md"
+              href="https://www.dobedo.com/shop"
+              target="_blank"
+              className="absolute -bottom-[150px] left-0 bg-yellow-400 text-black font-bold rounded-full w-32 h-32 flex items-center justify-center text-center rotate-[-20deg] shadow-md animate-slowspin"
             >
               SHOP<br />ONLINE
             </a>
+
           </div>
 
           {/* Right Image */}
@@ -55,8 +57,9 @@ export default function Shop() {
           <div className="md:hidden relative w-full font-semibold">
             {/* Button top-right */}
             <a
-              href="#"
-              className="bg-yellow-400 text-black font-bold rounded-full w-28 h-28 flex items-center justify-center text-center rotate-[-20deg] shadow-md absolute top-0 right-0"
+              href="https://www.dobedo.com/shop"
+              target="_blank"
+              className="bg-yellow-400 text-black font-bold rounded-full w-28 h-28 flex items-center justify-center text-center rotate-[-20deg] shadow-md absolute top-0 right-0 animate-slowspin"
             >
               OR SHOP<br />ONLINE
             </a>
