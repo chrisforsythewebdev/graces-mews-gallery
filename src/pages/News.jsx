@@ -30,11 +30,11 @@ export default function News() {
       <div className="relative w-full text-xl md:text-2xl max-w-6xl mx-auto mt-2 px-4 md:px-8">
         {/* Hover Preview Image (Desktop only) */}
         {isDesktop && hoveredItem && (
-          <div className="fixed inset-0 flex items-center justify-center z-10 pointer-events-none">
-            <img
+          <div className="fixed inset-0 flex items-center justify-end pr-[280px] z-10 pointer-events-none">
+          <img
               src={hoveredItem.thumbnail}
               alt={hoveredItem.title}
-              className="w-[640px] h-[400px] object-cover shadow-xl transition-opacity duration-300 ease-in-out"
+              className="w-[520px] h-[300px] object-cover shadow-xl transition-opacity duration-300 ease-in-out"
             />
           </div>
         )}

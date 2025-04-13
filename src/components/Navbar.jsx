@@ -7,25 +7,19 @@ export default function Nav() {
   const isHome = pathname === '/';
 
   const links = [
-    {
-      to: '/exhibitions',
-      label: 'EXHIBITIONS',
-      match: (path) => path === '/exhibitions' || path.startsWith('/artist'),
-      hideOnHome: true,
-      external: false,
-    },
-    {
-      to: '/news',
-      label: 'NEWS',
-      hideOnHome: true,
-      external: false,
-    },
-    {
-      to: 'https://www.dobedo.com/shop',
-      label: 'SHOP',
-      hideOnHome: true,
-      external: true,
-    },
+    // {
+    //   to: '/exhibitions',
+    //   label: 'EXHIBITIONS',
+    //   match: (path) => path === '/exhibitions' || path.startsWith('/artist'),
+    //   hideOnHome: true,
+    //   external: false,
+    // },
+    // {
+    //   to: '/news',
+    //   label: 'NEWS',
+    //   hideOnHome: true,
+    //   external: false,
+    // },
     {
       to: '/info',
       label: 'INFO',

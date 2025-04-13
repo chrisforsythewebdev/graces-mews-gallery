@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import jas from '../assets/images/jas-knight.jpeg';
 import dick from '../assets/images/dick-homepage.jpeg';
 import harley from '../assets/images/harley.jpeg';
@@ -10,6 +10,7 @@ import Layout from '../components/Layout';
 const exhibitions = {
   current: [
     {
+      slug: 'dick-jewell',
       date: '30 Jan – 6 Apr 2025',
       artist: 'Dick Jewell',
       title: 'SELECTED WORKS',
@@ -20,6 +21,7 @@ const exhibitions = {
   ],
   upcoming: [
     {
+      slug: 'jas-knight',
       date: '30 Jan – 6 Apr 2025',
       artist: 'Jas Knight',
       title: 'TERRAIN',
@@ -27,6 +29,7 @@ const exhibitions = {
       images: [jas],
     },
     {
+      slug: 'harley-weir',
       date: '30 Jan – 6 Apr 2025',
       artist: 'Harley Weir',
       title: 'SINS OF A DAUGHTER',
@@ -45,68 +48,49 @@ const exhibitions = {
 };
 
 export default function Exhibitions() {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const expandedSlug = params.get('expand');
   const [expandedIndex, setExpandedIndex] = useState(null);
 
   const handleToggle = (index) => {
     setExpandedIndex(expandedIndex === index ? null : index);
   };
 
+  useEffect(() => {
+    if (expandedSlug) {
+      const allExhibitions = [...exhibitions.current, ...exhibitions.upcoming];
+      allExhibitions.forEach((item, i) => {
+        if (item.slug === expandedSlug) {
+          const section = exhibitions.current.includes(item) ? 'current' : 'upcoming';
+          setExpandedIndex(`${section}-${i}`);
+        }
+      });
+    }
+  }, [expandedSlug]);
+
   const ExhibitionRow = ({ item, index, section }) => {
     const isExpanded = expandedIndex === `${section}-${index}`;
     const carouselRef = useRef(null);
     const contentRef = useRef(null);
-    const slug = item.artist.toLowerCase().replace(/\s+/g, '-');
-
-    const [height, setHeight] = useState(0);
-    const [isVisible, setIsVisible] = useState(false);
-
-    useEffect(() => {
-      const contentEl = contentRef.current;
-      if (!contentEl) return;
-
-      const handleTransitionEnd = () => {
-        if (!isExpanded) {
-          setIsVisible(false);
-        }
-      };
-
-      if (isExpanded) {
-        setIsVisible(true);
-        requestAnimationFrame(() => {
-          setHeight(contentEl.scrollHeight);
-        });
-      } else if (!isExpanded && contentEl) {
-        setHeight(contentEl.scrollHeight);
-        requestAnimationFrame(() => {
-          setHeight(0);
-        });
-
-        contentEl.addEventListener('transitionend', handleTransitionEnd, { once: true });
-      }
-
-      return () => {
-        contentEl?.removeEventListener('transitionend', handleTransitionEnd);
-      };
-    }, [isExpanded]);
 
     return (
       <div
         key={index}
-        className="border-b border-black cursor-pointer py-4"
+        className="border-b border-black cursor-pointer py-4 transition-all"
         onClick={() => handleToggle(`${section}-${index}`)}
       >
-        {/* Desktop layout */}
         <div className="hidden md:grid grid-cols-[1fr_1fr_1fr_1fr_144px] gap-4 text-lg items-start">
           <div className="flex flex-col justify-between h-full relative">
             <p className="font-semibold">{item.date}</p>
             {section === 'current' && (
-              <span className="absolute bottom-0 left-0 text-xl transform transition-transform duration-300">
+              <span className="absolute bottom-0 left-0 text-xl">
                 {isExpanded ? '' : '↓'}
               </span>
             )}
           </div>
           <p className="font-semibold">
-            <Link to={`/artist/${slug}`} className="underline hover:no-underline">
+            <Link to={`/artist/${item.slug}`} className="underline hover:no-underline">
               {item.artist}
             </Link>
           </p>
@@ -123,7 +107,6 @@ export default function Exhibitions() {
           )}
         </div>
 
-        {/* Mobile layout */}
         <div className="md:hidden flex flex-col space-y-1">
           <p className="text-md font-semibold">{item.date}</p>
           {item.images?.[0] && (
@@ -138,22 +121,19 @@ export default function Exhibitions() {
             <p>{item.location}</p>
           </div>
           <p className="text-md font-semibold">
-            <Link to={`/artist/${slug}`} className="hover:underline">
+            <Link to={`/artist/${item.slug}`} className="hover:underline">
               {item.artist}
             </Link>
           </p>
         </div>
 
-        {/* Expandable section */}
         <div
-          className="transition-all duration-500 ease-in-out overflow-hidden"
-          style={{ maxHeight: `${height}px` }}
+          ref={contentRef}
+          className={`transition-all duration-700 ease-in-out overflow-hidden ${
+            isExpanded ? 'max-h-[1200px] opacity-100' : 'max-h-0 opacity-0'
+          }`}
         >
-          <div
-            ref={contentRef}
-            className={`pt-2 space-y-2 w-full ${isVisible ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
-          >
-            {/* Desktop carousel */}
+          <div className="pt-2 space-y-2 w-full">
             <div className="hidden md:flex flex-col items-center w-full space-y-2">
               <div
                 ref={carouselRef}
@@ -164,7 +144,7 @@ export default function Exhibitions() {
                     key={i}
                     src={img}
                     alt=""
-                    className="min-w-2/3 h-[300px] snap-center"
+                    className="min-w-2/3 h-[300px] snap-center object-cover"
                   />
                 ))}
               </div>
@@ -192,7 +172,6 @@ export default function Exhibitions() {
               </div>
             </div>
 
-            {/* Description */}
             {item.description && (
               <p className="text-sm md:text-base leading-tight max-w-3xl mt-4">
                 {item.description}
@@ -207,7 +186,6 @@ export default function Exhibitions() {
   return (
     <Layout>
       <div className="min-h-screen w-full p-4 md:p-8 flex flex-col items-center">
-        {/* CURRENT */}
         <section className="w-full max-w-6xl mb-12">
           <h2 className="text-[32px] font-bold leading-none mb-4">CURRENT</h2>
           <div className="border-b border-black" />
@@ -215,8 +193,6 @@ export default function Exhibitions() {
             <ExhibitionRow key={i} item={item} index={i} section="current" />
           ))}
         </section>
-
-        {/* UPCOMING */}
         <section className="w-full max-w-6xl mb-12">
           <h2 className="text-[32px] font-bold leading-none mb-4">UPCOMING</h2>
           <div className="border-b border-black" />
@@ -224,8 +200,6 @@ export default function Exhibitions() {
             <ExhibitionRow key={i} item={item} index={i} section="upcoming" />
           ))}
         </section>
-
-        {/* PAST */}
         <section className="w-full max-w-6xl mb-24">
           <h2 className="text-[32px] font-bold leading-none mb-4">PAST</h2>
           <div className="border-b border-black opacity-50 mb-2" />
