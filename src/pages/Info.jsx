@@ -48,12 +48,15 @@ export default function Info() {
               {/* London */}
               <div>
                 <p className="text-black">London</p>
-                <p>7 Atlas Mews</p>
-                <p>Off Ramsgate Street</p>
-                <p>London, E8 2NE</p>
+                <p>9 Graces Mews</p>
+                <p>London, SE5 8JF</p>
                 <p>UK</p>
-                <p className="mt-2">+44 0203 740 6555</p>
-                <p>hello@dobedo.agency</p>
+                <a
+                  href="mailto:hello@gracesmews.com"
+                  className="text-gray-500 font-semibold text-md hover:underline"
+                >
+                  hello@gracesmews.com
+                </a>
               </div>
 
               {/* New York */}
@@ -63,8 +66,12 @@ export default function Info() {
                 <p>2nd Floor</p>
                 <p>NY, NY 10002</p>
                 <p>USA</p>
-                <p className="mt-2">+1 (646) 649 2522</p>
-                <p>hello@dobedo.agency</p>
+                <a
+                  href="mailto:hello@gracesmews.com"
+                  className="text-gray-500 font-semibold text-md hover:underline"
+                >
+                  hello@gracesmews.com
+                </a>
               </div>
             </div>
 
@@ -88,7 +95,7 @@ export default function Info() {
             src={shopImage}
             alt="Gallery Shop"
             className="w-full h-auto object-cover"
-            style={{ maxHeight: '656px' }}
+            style={{ maxHeight: '476px' }}
           />
         </div>
       </div>
