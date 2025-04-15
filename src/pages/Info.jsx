@@ -48,7 +48,7 @@ export default function Info() {
               {/* London */}
               <div>
                 <p className="text-black">London</p>
-                <p>9 Graces Mews</p>
+                <p>9-10 Graces Mews</p>
                 <p>London, SE5 8JF</p>
                 <p>UK</p>
                 <a
