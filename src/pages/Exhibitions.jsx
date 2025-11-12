@@ -10,7 +10,7 @@ import SEO from '../components/SEO';
 export default function Exhibitions() {
   const location = useLocation();
   const [exhibitions, setExhibitions] = useState({ current: [], upcoming: [], past: [] });
-  const [expandedIndex, setExpandedIndex] = useState(null);
+  const [ , setExpandedIndex] = useState(null);
 
   // Canonical base + fallback OG image
   const BASE_URL = 'https://www.gracesmews.com';

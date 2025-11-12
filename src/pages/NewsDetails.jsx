@@ -87,7 +87,7 @@ export default function NewsDetail() {
               <div className="mt-4">
                 <img
                   src={item.gallery[0]}
-                  alt={`${item.title} — image 1`}
+                  alt={`${item.title} — 1`}
                   className="w-full h-[320px] object-cover"
                 />
               </div>
