@@ -353,6 +353,7 @@ export default function Exhibitions() {
                     href={item.pressRelease.asset.url}
                     download
                     className="inline-block mt-2 underline text-sm"
+                    rel="noopener noreferrer"
                   >
                     Download Press Release
                   </a>

@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 import Layout from '../components/Layout';
 import { client } from '../lib/client';
 import { getArtistBySlug } from '../lib/queries';
-import { PortableText } from '@portabletext/react';
+// import { PortableText } from '@portabletext/react';
 
 export default function ArtistDetails() {
   const { slug } = useParams();
