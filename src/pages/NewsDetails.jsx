@@ -23,9 +23,18 @@ export default function NewsDetail() {
 
   const galleryCount = item.gallery?.length || 0;
 
+  const formattedDate = item.fullDate
+    ? new Date(item.fullDate).toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
+    : '';
+
   return (
     <Layout>
       <div className="w-full max-w-6xl mx-auto px-4 md:px-8 mt-2 pt-[20px] pb-[20px]">
+
         {/* ===== Mobile Hero ===== */}
         <div className="md:hidden">
           <img
@@ -35,19 +44,11 @@ export default function NewsDetail() {
           />
         </div>
 
-        {/* ===== Mobile Title + Top Description (unchanged) ===== */}
+        {/* ===== Mobile Title + Top Description ===== */}
         <div className="md:hidden mb-4 w-full">
           <div className="w-3/4">
             <h2 className="font-bold font-gracesmews text-lg uppercase">{item.title}</h2>
-            <p className="text-sm font-gracesmews text-gray-500">
-              {item.fullDate
-                ? new Date(item.fullDate).toLocaleDateString('en-GB', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                  })
-                : ''}
-            </p>
+            <p className="text-sm font-gracesmews text-gray-500">{formattedDate}</p>
           </div>
           {item.descriptionTop && (
             <div className="pt-2 text-md">
@@ -56,118 +57,94 @@ export default function NewsDetail() {
           )}
         </div>
 
-        {/* ===== Desktop: smaller hero image; left text ~1/3 down ===== */}
-        <div className="hidden md:grid grid-cols-12 gap-8 mb-8 items-start">
-          {/* Left text (offset down by ~1/3 viewport height) */}
-          <div className="col-span-4 mt-[32vh]">
-            <h2 className="font-bold text-lg uppercase mb-2">{item.title}</h2>
-            <p className="text-sm font-gracesmews text-gray-500">
-              {item.fullDate
-                ? new Date(item.fullDate).toLocaleDateString('en-GB', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                  })
-                : ''}
-            </p>
+        {/* ===== Desktop: Title/Date row ===== */}
+        <div className="hidden md:block mb-4">
+          <h2 className="font-bold text-lg uppercase mb-2">{item.title}</h2>
+          <p className="text-sm font-gracesmews text-gray-500">{formattedDate}</p>
+        </div>
+
+        {/* ===== Desktop Grid: Poster + Top Description + optional single image ===== */}
+        <div className="hidden md:grid grid-cols-12 gap-8 mb-4 items-start">
+          <div className="col-span-4">
+            <img
+              src={item.thumbnail}
+              alt={item.title || 'News poster'}
+              className="w-auto max-w-[360px] max-h-[640px] h-auto object-contain shadow-sm"
+            />
           </div>
 
           <div className="col-span-1" />
 
-          {/* Right: hero image aligned to the RIGHT of the 7-col area */}
           <div className="col-span-7 pr-14">
-            <div className="flex justify-end">
-              <img
-                src={item.thumbnail}
-                alt={item.title}
-                className="w-auto max-w-full h-auto object-contain"
-              />
-            </div>
-
-            {/* Keep top description under the image on desktop  */}
             {item.descriptionTop && (
-              <div className="mt-8 text-sm md:text-base">
+              <div className="pt-0 text-sm md:text-base">
                 <PortableText value={item.descriptionTop} />
+              </div>
+            )}
+
+            {/* Single image remains unchanged */}
+            {galleryCount === 1 && (
+              <div className="mt-4">
+                <img
+                  src={item.gallery[0]}
+                  alt={`${item.title} — image 1`}
+                  className="w-full h-[320px] object-cover"
+                />
               </div>
             )}
           </div>
         </div>
 
-        {/* ===== Carousel / Gallery ===== */}
-        <div className="relative pb-8">
-          {galleryCount === 1 ? (
-            <>
-              {/* Mobile: single image full width */}
-              <div className="md:hidden">
-                <img
-                  src={item.gallery[0]}
-                  alt={item.title}
-                  className="w-full h-[260px] object-cover"
-                />
-              </div>
-
-              {/* Desktop: single image full width of the text column */}
-              <div className="hidden md:grid grid-cols-12 gap-8">
-                <div className="col-span-4" />
-                <div className="col-span-1" />
-                <div className="col-span-7 pr-14">
-                  <img
-                    src={item.gallery[0]}
-                    alt={item.title}
-                    className="w-full h-[320px] object-cover"
-                  />
+        {/* ===== Desktop: multi-image gallery row (only when >1) ===== */}
+        {galleryCount > 1 && (
+          <div className="hidden md:grid grid-cols-12 gap-8 mb-6">
+            <div className="col-span-4" />
+            <div className="col-span-1" />
+            <div className="col-span-7 pr-14">
+              <div className="relative">
+                <div
+                  ref={carouselRef}
+                  className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-6"
+                >
+                  {item.gallery?.map((img, i) => (
+                    <img
+                      key={i}
+                      src={img}
+                      alt={`Gallery ${i + 1} — ${item.title}`}
+                      className="snap-center h-auto w-auto max-h-[420px] min-w-[60%] object-contain rounded-sm"
+                    />
+                  ))}
                 </div>
-              </div>
-            </>
-          ) : (
-            <>
-              {/* Multi-image horizontal scroller */}
-              <div
-                ref={carouselRef}
-                className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-4"
-              >
-                {item.gallery?.map((img, i) => (
-                  <img
-                    key={i}
-                    src={img}
-                    alt={`Gallery ${i}`}
-                    className="w-full md:min-w-[41.5%] md:max-w-[40%] h-[200px] md:h-[260px] object-cover snap-center"
-                  />
-                ))}
-              </div>
 
-              {/* Arrow Controls: desktop only, only if 3+ images */}
-              {galleryCount >= 3 && (
-                <div className="hidden md:flex absolute -bottom-1 left-0 gap-2">
-                  <button
-                    onClick={() =>
-                      carouselRef.current?.scrollBy({
-                        left: -300,
-                        behavior: 'smooth',
-                      })
-                    }
-                    className="text-2xl hover:text-[#AAAAAA] hover:scale-110"
-                  >
-                    ←
-                  </button>
-                  <button
-                    onClick={() =>
-                      carouselRef.current?.scrollBy({
-                        left: 300,
-                        behavior: 'smooth',
-                      })
-                    }
-                    className="text-2xl hover:text-[#AAAAAA] hover:scale-110"
-                  >
-                    →
-                  </button>
-                </div>
-              )}
-            </>
-          )}
-        </div>
+                {/* Arrows if 3+ images */}
+                {galleryCount >= 3 && (
+                  <div className="hidden md:flex absolute right-4 bottom-4 gap-2">
+                    <button
+                      onClick={() =>
+                        carouselRef.current?.scrollBy({ left: -300, behavior: 'smooth' })
+                      }
+                      aria-label="Scroll gallery left"
+                      className="text-2xl hover:text-[#AAAAAA] hover:scale-110"
+                    >
+                      ←
+                    </button>
+                    <button
+                      onClick={() =>
+                        carouselRef.current?.scrollBy({ left: 300, behavior: 'smooth' })
+                      }
+                      aria-label="Scroll gallery right"
+                      className="text-2xl hover:text-[#AAAAAA] hover:scale-110"
+                    >
+                      →
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
-        {/* ===== Desktop Bottom Description, Video, Credit, Buy ===== */}
+        {/* ===== Desktop Bottom Description / Video / Buy ===== */}
         {(item.descriptionBottom || item.video || item.videoDescription || item.buyText) && (
           <div className="hidden md:grid grid-cols-12 gap-8 mt-4">
             <div className="col-span-4" />
@@ -176,14 +153,17 @@ export default function NewsDetail() {
               {item.descriptionBottom && <PortableText value={item.descriptionBottom} />}
 
               {item.video && (
-                <div className="aspect-video my-4">
-                  <iframe
-                    src={item.video}
-                    title="Video"
-                    allowFullScreen
-                    className="w-full h-[350px] mt-10"
-                  />
-                </div>
+                <>
+                  {/* ensure iframe uses same column width as images */}
+                  <div className="my-4">
+                    <iframe
+                      src={item.video}
+                      title={item.videoDescription ? item.videoDescription : `Video – ${item.title}`}
+                      allowFullScreen
+                      className="w-full h-[420px]"
+                    />
+                  </div>
+                </>
               )}
 
               {item.videoDescription && (
@@ -210,13 +190,18 @@ export default function NewsDetail() {
           </div>
         )}
 
-        {/* ===== Mobile Bottom Description, Video, Credit, Buy (unchanged) ===== */}
+        {/* ===== Mobile Bottom (unchanged) ===== */}
         <div className="md:hidden space-y-4 mt-6">
           {item.descriptionBottom && <PortableText value={item.descriptionBottom} />}
 
           {item.video && (
             <div className="aspect-video">
-              <iframe src={item.video} title="Video" allowFullScreen className="w-full h-full" />
+              <iframe
+                src={item.video}
+                title={item.videoDescription || `Video – ${item.title}`}
+                allowFullScreen
+                className="w-full h-full"
+              />
             </div>
           )}
 
@@ -239,6 +224,7 @@ export default function NewsDetail() {
             </p>
           )}
         </div>
+
       </div>
     </Layout>
   );
