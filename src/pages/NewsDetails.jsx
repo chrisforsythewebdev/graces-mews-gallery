@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { client } from '../lib/client';
@@ -7,14 +7,15 @@ import { PortableText } from '@portabletext/react';
 
 export default function NewsDetail() {
   const { id } = useParams();
-  const carouselRef = useRef(null);
   const [item, setItem] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       const query = getNewsItemBySlug(id);
       const result = await client.fetch(query);
       setItem(result);
+      setCurrentIndex(0); // reset when navigating to a new item
     };
     fetchData();
   }, [id]);
@@ -31,6 +32,17 @@ export default function NewsDetail() {
       })
     : '';
 
+  const canGoPrev = currentIndex > 0;
+  const canGoNext = currentIndex < galleryCount - 1;
+
+  const handlePrev = () => {
+    if (canGoPrev) setCurrentIndex((i) => i - 1);
+  };
+
+  const handleNext = () => {
+    if (canGoNext) setCurrentIndex((i) => i + 1);
+  };
+
   return (
     <Layout>
       <div className="w-full max-w-6xl mx-auto px-4 md:px-8 mt-2 pt-[20px] pb-[20px]">
@@ -44,15 +56,47 @@ export default function NewsDetail() {
           />
         </div>
 
-        {/* ===== Mobile Title + Top Description ===== */}
+        {/* ===== Mobile Title + Top Description + Main Image/Carousel ===== */}
         <div className="md:hidden mb-4 w-full">
           <div className="w-3/4">
             <h2 className="font-bold font-gracesmews text-lg uppercase">{item.title}</h2>
             <p className="text-sm font-gracesmews text-gray-500">{formattedDate}</p>
           </div>
+
           {item.descriptionTop && (
             <div className="pt-2 text-md">
               <PortableText value={item.descriptionTop} />
+            </div>
+          )}
+
+          {galleryCount > 0 && (
+            <div className="mt-4">
+              <img
+                src={item.gallery[currentIndex]}
+                alt={`${item.title} — ${currentIndex + 1}`}
+                className="w-full h-auto max-h-[420px] object-contain"
+              />
+
+              {galleryCount > 1 && (
+                <div className="flex justify-end gap-4 mt-2">
+                  <button
+                    onClick={handlePrev}
+                    disabled={!canGoPrev}
+                    aria-label="Previous image"
+                    className="text-2xl text-black hover:text-[#AAAAAA] hover:scale-110 disabled:text-gray-300 disabled:cursor-default disabled:hover:scale-100 disabled:hover:text-gray-300 transition-transform"
+                  >
+                    ←
+                  </button>
+                  <button
+                    onClick={handleNext}
+                    disabled={!canGoNext}
+                    aria-label="Next image"
+                    className="text-2xl text-black hover:text-[#AAAAAA] hover:scale-110 disabled:text-gray-300 disabled:cursor-default disabled:hover:scale-100 disabled:hover:text-gray-300 transition-transform"
+                  >
+                    →
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -63,7 +107,7 @@ export default function NewsDetail() {
           <p className="text-sm font-gracesmews text-gray-500">{formattedDate}</p>
         </div>
 
-        {/* ===== Desktop Grid: Poster + Top Description + optional single image ===== */}
+        {/* ===== Desktop Grid: Poster + Top Description + Image/Carousel ===== */}
         <div className="hidden md:grid grid-cols-12 gap-8 mb-4 items-start">
           <div className="col-span-4">
             <img
@@ -82,67 +126,39 @@ export default function NewsDetail() {
               </div>
             )}
 
-            {/* Single image remains unchanged */}
-            {galleryCount === 1 && (
+            {/* Same layout whether 1 or many images: one main image + arrows */}
+            {galleryCount > 0 && (
               <div className="mt-4">
                 <img
-                  src={item.gallery[0]}
-                  alt={`${item.title} — 1`}
-                  className="w-full h-[320px] object-cover"
+                  src={item.gallery[currentIndex]}
+                  alt={`${item.title} — ${currentIndex + 1}`}
+                  className="w-full h-auto max-h-[420px] object-contain"
                 />
-              </div>
-            )}
-          </div>
-        </div>
 
-        {/* ===== Desktop: multi-image gallery row (only when >1) ===== */}
-        {galleryCount > 1 && (
-          <div className="hidden md:grid grid-cols-12 gap-8 mb-6">
-            <div className="col-span-4" />
-            <div className="col-span-1" />
-            <div className="col-span-7 pr-14">
-              <div className="relative">
-                <div
-                  ref={carouselRef}
-                  className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-6"
-                >
-                  {item.gallery?.map((img, i) => (
-                    <img
-                      key={i}
-                      src={img}
-                      alt={`Gallery ${i + 1} — ${item.title}`}
-                      className="snap-center h-auto w-auto max-h-[420px] min-w-[60%] object-contain rounded-sm"
-                    />
-                  ))}
-                </div>
-
-                {/* Arrows if 3+ images */}
-                {galleryCount >= 3 && (
-                  <div className="hidden md:flex absolute right-4 bottom-4 gap-2">
+                {galleryCount > 1 && (
+                  <div className="flex justify-end gap-4 mt-2">
                     <button
-                      onClick={() =>
-                        carouselRef.current?.scrollBy({ left: -300, behavior: 'smooth' })
-                      }
-                      aria-label="Scroll gallery left"
-                      className="text-2xl hover:text-[#AAAAAA] hover:scale-110"
+                      onClick={handlePrev}
+                      disabled={!canGoPrev}
+                      aria-label="Previous image"
+                      className="text-2xl text-black hover:text-[#AAAAAA] hover:scale-110 disabled:text-gray-300 disabled:cursor-default disabled:hover:scale-100 disabled:hover:text-gray-300 transition-transform"
                     >
                       ←
                     </button>
                     <button
-                      onClick={() =>
-                        carouselRef.current?.scrollBy({ left: 300, behavior: 'smooth' })
-                      }
-                      aria-label="Scroll gallery right"
-                      className="text-2xl hover:text-[#AAAAAA] hover:scale-110"
+                      onClick={handleNext}
+                      disabled={!canGoNext}
+                      aria-label="Next image"
+                      className="text-2xl text-black hover:text-[#AAAAAA] hover:scale-110 disabled:text-gray-300 disabled:cursor-default disabled:hover:scale-100 disabled:hover:text-gray-300 transition-transform"
                     >
                       →
                     </button>
                   </div>
                 )}
               </div>
-            </div>
+            )}
           </div>
-        )}
+        </div>
 
         {/* ===== Desktop Bottom Description / Video / Buy ===== */}
         {(item.descriptionBottom || item.video || item.videoDescription || item.buyText) && (
@@ -190,7 +206,7 @@ export default function NewsDetail() {
           </div>
         )}
 
-        {/* ===== Mobile Bottom (unchanged) ===== */}
+        {/* ===== Mobile Bottom ===== */}
         <div className="md:hidden space-y-4 mt-6">
           {item.descriptionBottom && <PortableText value={item.descriptionBottom} />}
 
