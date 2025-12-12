@@ -10,21 +10,26 @@ import SEO from '../components/SEO';
 export default function Exhibitions() {
   const location = useLocation();
   const [exhibitions, setExhibitions] = useState({ current: [], upcoming: [], past: [] });
-  const [ , setExpandedIndex] = useState(null);
+  const [, setExpandedIndex] = useState(null);
 
-  // Canonical base + fallback OG image
   const BASE_URL = 'https://www.gracesmews.com';
-  // const defaultOg = `${BASE_URL}/og-default.jpg`;
 
   useEffect(() => {
     const fetchData = async () => {
       const data = await client.fetch(getExhibitions);
       const now = new Date();
+
       const current = data.filter(ex => new Date(ex.start) <= now && new Date(ex.end) >= now);
       const upcoming = data.filter(ex => new Date(ex.start) > now);
-      const past = data.filter(ex => new Date(ex.end) < now);
+
+      // ✅ Past newest -> oldest (reverse order)
+      const past = data
+        .filter(ex => new Date(ex.end) < now)
+        .sort((a, b) => new Date(b.end) - new Date(a.end));
+
       setExhibitions({ current, upcoming, past });
     };
+
     fetchData();
   }, []);
 
@@ -55,11 +60,7 @@ export default function Exhibitions() {
   const params = new URLSearchParams(location.search);
   const expandedSlug = params.get('expand');
 
-  const all = [
-    ...exhibitions.current,
-    ...exhibitions.upcoming,
-    ...exhibitions.past,
-  ];
+  const all = [...exhibitions.current, ...exhibitions.upcoming, ...exhibitions.past];
 
   const activeEx =
     (expandedSlug && all.find(ex => ex.slug === expandedSlug)) ||
@@ -67,12 +68,10 @@ export default function Exhibitions() {
     exhibitions.upcoming[0] ||
     exhibitions.past[0];
 
-  const seoUrl = activeEx
-    ? `${BASE_URL}/exhibitions?expand=${activeEx.slug}`
-    : `${BASE_URL}/exhibitions`;
+  const seoUrl = activeEx ? `${BASE_URL}/exhibitions?expand=${activeEx.slug}` : `${BASE_URL}/exhibitions`;
 
   const dateStr = activeEx
-    ? `${new Date(activeEx.start).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })} – ${new Date(activeEx.end).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })}`
+    ? `${new Date(activeEx.start).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} – ${new Date(activeEx.end).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`
     : '';
 
   const seoTitle = activeEx
@@ -96,12 +95,14 @@ export default function Exhibitions() {
     location: {
       '@type': 'ArtGallery',
       name: 'Graces Mews',
-      url: BASE_URL
+      url: BASE_URL,
     },
-    performer: activeEx.artist?.name ? {
-      '@type': 'Person',
-      name: activeEx.artist.name
-    } : undefined
+    performer: activeEx.artist?.name
+      ? {
+          '@type': 'Person',
+          name: activeEx.artist.name,
+        }
+      : undefined,
   };
   // --------------------------------------
 
@@ -132,10 +133,10 @@ export default function Exhibitions() {
 
   const portableTextComponents = {
     marks: {
-      link: ({children, value}) => {
+      link: ({ children, value }) => {
         const href = value?.href || '#';
         const newTab = value?.openInNewTab;
-  
+
         return (
           <a
             href={href}
@@ -149,7 +150,6 @@ export default function Exhibitions() {
       },
     },
   };
-  
 
   function ExhibitionRow({ item, expandOnLoad = false, variant = 'default' }) {
     const initialExpanded = variant === 'past' ? false : !!expandOnLoad;
@@ -163,27 +163,31 @@ export default function Exhibitions() {
     const headerRef = useRef(null);
 
     const start = new Date(item.start).toLocaleDateString('en-GB', {
-      day: 'numeric', month: 'short', year: 'numeric',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
     });
     const end = new Date(item.end).toLocaleDateString('en-GB', {
-      day: 'numeric', month: 'short', year: 'numeric',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
     });
 
     const rowWrapperClass =
       variant === 'past'
-        ? `py-4 ${isExpanded ? 'border-b border-black' : ''}`
+        ? `py-2 ${isExpanded ? 'border-b border-black' : ''}`
         : 'py-4 border-b border-black';
 
+    // Remove 144px thumbnail column entirely for PAST
     const desktopHeaderBase =
-      'relative hidden md:grid grid-cols-[1fr_1fr_1fr_1fr_144px] gap-4 text-lg items-start cursor-pointer';
+      variant === 'past'
+        ? 'relative hidden md:grid grid-cols-[1fr_1fr_1fr_1fr] gap-4 text-lg items-start cursor-pointer'
+        : 'relative hidden md:grid grid-cols-[1fr_1fr_1fr_1fr_144px] gap-4 text-lg items-start cursor-pointer';
 
     const desktopHeaderPast =
       ' text-gray-400 opacity-70 transition-colors hover:text-black hover:opacity-100';
 
-    const desktopHeaderClass =
-      variant === 'past'
-        ? `${desktopHeaderBase} ${desktopHeaderPast}`
-        : desktopHeaderBase;
+    const desktopHeaderClass = variant === 'past' ? `${desktopHeaderBase} ${desktopHeaderPast}` : desktopHeaderBase;
 
     const mobileHeaderBase = 'md:hidden flex flex-col space-y-1';
     const mobileHeaderPastCollapsed = ' text-gray-500 opacity-70';
@@ -216,40 +220,40 @@ export default function Exhibitions() {
           <p className="font-gracesmews uppercase">{item.title}</p>
           <p className="mb-4 font-gracesmews">{item.location}</p>
 
-          {/* Thumbnail (desktop) — OMIT for past */}
-          <div className="w-36 h-24 relative">
-            <AnimatePresence mode="wait">
-              {variant !== 'past' && !isExpanded && item.images?.[0]?.asset?.url && (
-                <motion.img
-                  key="thumbnail"
-                  src={item.images[0].asset.url}
-                  alt={item.title}
-                  className="absolute inset-0 w-full h-full object-cover"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                />
-              )}
-            </AnimatePresence>
-          </div>
+          {/* Thumbnail column ONLY for non-past */}
+          {variant !== 'past' && (
+            <div className="w-36 h-24 relative">
+              <AnimatePresence mode="wait">
+                {!isExpanded && item.images?.[0]?.asset?.url && (
+                  <motion.img
+                    key="thumbnail"
+                    src={item.images[0].asset.url}
+                    alt={item.title}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                )}
+              </AnimatePresence>
+            </div>
+          )}
 
-          {/* Arrow */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleToggle();
-            }}
-            className={`absolute -bottom-2 left-1/2 -translate-x-1/2 text-xl transition-all duration-700 hover:scale-150
-              ${
-                variant === 'past'
-                  ? (isExpanded ? 'opacity-100' : 'opacity-0 hover:opacity-100')
-                  : (isExpanded ? 'opacity-100' : 'opacity-50 hover:opacity-100')
-              }`}
-            aria-label={isExpanded ? 'Collapse' : 'Expand'}
-          >
-            {isExpanded ? '↑' : '↓'}
-          </button>
+          {/* Arrow — hide completely for past */}
+          {variant !== 'past' && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleToggle();
+              }}
+              className={`absolute -bottom-2 left-1/2 -translate-x-1/2 text-xl transition-all duration-700 hover:scale-150
+                ${isExpanded ? 'opacity-100' : 'opacity-50 hover:opacity-100'}`}
+              aria-label={isExpanded ? 'Collapse' : 'Expand'}
+            >
+              {isExpanded ? '↑' : '↓'}
+            </button>
+          )}
         </div>
 
         {/* MOBILE HEADER */}
@@ -262,6 +266,7 @@ export default function Exhibitions() {
             <p>{item.title}</p>
             <p>{item.location}</p>
           </div>
+
           <p className="text-lg font-semibold leading-tight tracking-tight font-gracesmews">
             <Link
               to={`/artist/${item.artist?.slug}`}
@@ -339,10 +344,7 @@ export default function Exhibitions() {
                 {/* Description */}
                 {item.description && (
                   <div className="max-w-3xl text-sm text-black space-y-2 leading-relaxed">
-                    <PortableText
-                      value={item.description}
-                      components={portableTextComponents}
-                    />
+                    <PortableText value={item.description} components={portableTextComponents} />
                   </div>
                 )}
 
@@ -368,14 +370,7 @@ export default function Exhibitions() {
 
   return (
     <>
-      {/* Minimal SEO block */}
-      <SEO
-        title={seoTitle}
-        description={seoDesc}
-        canonical={seoUrl}
-        image={seoImage || undefined}
-        jsonLd={jsonLd}
-      />
+      <SEO title={seoTitle} description={seoDesc} canonical={seoUrl} image={seoImage || undefined} jsonLd={jsonLd} />
 
       <Layout>
         <div className="min-h-screen w-full p-4 md:p-8 flex flex-col items-center">
@@ -388,11 +383,11 @@ export default function Exhibitions() {
                 <h2 className="text-[32px] font-gracesmews font-bold leading-none mb-4">
                   {section.toUpperCase()}
                 </h2>
+
                 <div className={`border-b border-black ${section === 'past' ? 'opacity-50 mb-2' : ''}`} />
 
                 {exhibitions[section].map((item) => {
-                  const expandOnLoad =
-                    section !== 'past' && location.search.includes(item.slug);
+                  const expandOnLoad = section !== 'past' && location.search.includes(item.slug);
                   return (
                     <ExhibitionRow
                       key={item._id}
@@ -410,4 +405,3 @@ export default function Exhibitions() {
     </>
   );
 }
-
