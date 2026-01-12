@@ -103,7 +103,7 @@ export default function NewsDetail() {
 
         {/* ===== Desktop: Title/Date row ===== */}
         <div className="hidden md:block mb-4">
-          <h2 className="font-bold text-lg uppercase mb-2">{item.title}</h2>
+          <h2 className="font-bold text-md uppercase mb-1">{item.title}</h2>
           <p className="text-sm font-gracesmews text-gray-500">{formattedDate}</p>
         </div>
 
@@ -121,7 +121,7 @@ export default function NewsDetail() {
 
           <div className="col-span-7 pr-14">
             {item.descriptionTop && (
-              <div className="pt-0 text-sm md:text-base">
+              <div className="pt-0 text-sm">
                 <PortableText value={item.descriptionTop} />
               </div>
             )}
@@ -165,7 +165,7 @@ export default function NewsDetail() {
           <div className="hidden md:grid grid-cols-12 gap-8 mt-4">
             <div className="col-span-4" />
             <div className="col-span-1" />
-            <div className="col-span-7 text-sm md:text-base w-full pr-14">
+            <div className="col-span-7 text-sm w-full pr-14">
               {item.descriptionBottom && <PortableText value={item.descriptionBottom} />}
 
               {item.video && (
