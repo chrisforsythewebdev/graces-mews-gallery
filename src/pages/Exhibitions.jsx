@@ -207,15 +207,12 @@ export default function Exhibitions() {
             <p className="font-gracesmews">{formatDateRange(item.start, item.end)}</p>
           </div>
 
-          <p>
-            <Link
-              to={`/artist/${item.artist?.slug}`}
+            <p
               onClick={(e) => e.stopPropagation()}
-              className={`${isExpanded ? 'underline' : ''} font-gracesmews`}
+              className="font-gracesmews"
             >
               {item.artist?.name}
-            </Link>
-          </p>
+            </p>
 
           <p className="font-gracesmews uppercase">{item.title}</p>
           <p className="mb-4 font-gracesmews">{item.location}</p>
